@@ -1,7 +1,13 @@
+import GameTable from "@/components/GameTable";
+
 export default function Home() {
   return (
-    <div className="flex justify-center items-center h-screen bg-white">
-      <h1 className="">ORÐIÐ</h1>
+    // Wrapper
+    <div className="flex flex-col">
+      <h1 className="flex justify-center w-full my-2 text-5xl ">ORÐIÐ</h1>
+      <div className="flex flex-col gap-4">
+        <GameTable />
+      </div>
     </div>
   );
 }
