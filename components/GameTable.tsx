@@ -12,8 +12,13 @@ export default function GameTable() {
     ["", "", "", "", ""],
     ["", "", "", "", ""],
   ]);
+
+  const [colors, setColors] = useState<string[][]>(
+    Array(6).fill(Array(5).fill("transparent")) // Start with transparent colors
+  );
+
   const [activeRow, setActiveRow] = useState<number>(0);
-  const word = "starf";
+  const word = "stars";
 
   // Create refs for each input field with correct typing and initialization
   const inputRefs = useRef<(HTMLInputElement | null)[][]>(
@@ -30,15 +35,46 @@ export default function GameTable() {
   // Function to check if the guessed word matches the correct word
   function checkWord() {
     const guessedWord = rows[activeRow].join("").toLowerCase(); // Join letters and convert to lowercase
+
+    // Not able to guess if row is not filled
     if (guessedWord.length < 5) {
       return;
     }
 
+    // Deep clone the colors array
+    const newColors = colors.map((row) => [...row]);
+
+    // Create a copy of the word array to track which letters have been "used up"
+    const wordLetters = word.split(""); // ['x', 'x', 'x', 'x', 'x']
+
+    // First pass: Mark correct letters (green) in the correct positions
+    for (let i = 0; i < 5; i++) {
+      if (guessedWord[i] === word[i]) {
+        newColors[activeRow][i] = "green"; // Correct letter and position
+        wordLetters[i] = ""; // Mark the letter as used
+      }
+    }
+
+    // Second pass: Mark correct letters in wrong positions (yellow)
+    for (let i = 0; i < 5; i++) {
+      if (
+        newColors[activeRow][i] !== "green" &&
+        wordLetters.includes(guessedWord[i])
+      ) {
+        newColors[activeRow][i] = "goldenrod"; // Correct letter, wrong position
+        // Remove the letter from wordLetters to avoid marking it again
+        wordLetters[wordLetters.indexOf(guessedWord[i])] = "";
+      } else if (newColors[activeRow][i] !== "green") {
+        newColors[activeRow][i] = "gray"; // Incorrect letter
+      }
+    }
+
+    setColors(newColors);
+
     if (guessedWord === word) {
-      console.log("Winner");
+      alert("Winner");
       return;
     }
-    console.log("Try again");
 
     // Move to the next row after guessing
     if (activeRow < rows.length - 1) {
@@ -47,7 +83,7 @@ export default function GameTable() {
   }
 
   const borderStyle =
-    "border-2 w-16 h-16 border-gray-500 flex items-center justify-center text-5xl";
+    "border-2 w-16 h-16 flex items-center justify-center text-5xl";
 
   // Handler to update the input value for each row and index
   const handleInputChange = (
@@ -104,7 +140,17 @@ export default function GameTable() {
       {rows.map((row, rowIndex) => (
         <div className="flex justify-center items-center gap-3" key={rowIndex}>
           {row.map((letter, index) => (
-            <div className={borderStyle} key={index}>
+            <div
+              className={borderStyle}
+              key={index}
+              style={{
+                borderColor: "gray",
+                backgroundColor:
+                  rowIndex < activeRow
+                    ? colors[rowIndex][index]
+                    : "transparent", // Only apply color to previous rows
+              }}
+            >
               <input
                 ref={(el) => {
                   // Ensure inputRefs.current[rowIndex] is initialized as an array
@@ -117,7 +163,7 @@ export default function GameTable() {
                 maxLength={1}
                 value={letter}
                 onChange={(e) => handleInputChange(e, rowIndex, index)}
-                onKeyDown={(e) => handleKeyDown(e, rowIndex, index)} // Add keydown handler
+                onKeyDown={(e) => handleKeyDown(e, rowIndex, index)}
                 disabled={rowIndex !== activeRow} // Disable non-active rows
                 className="text-center w-full h-full bg-transparent border-none focus:outline-none"
                 autoFocus={rowIndex === 0 && index === 0} // Auto-focus the first input in the first row
@@ -131,7 +177,7 @@ export default function GameTable() {
         onClick={checkWord} // Use onClick for button
         className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded mt-4"
       >
-        Guess
+        Giska
       </button>
     </div>
   );
