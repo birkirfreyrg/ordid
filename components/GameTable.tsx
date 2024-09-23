@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import WinScreen from "./WinScreen";
 
 export default function GameTable() {
+  const [hasWon, setHasWon] = useState(false);
   // Initial state now tracks multiple rows
   const [rows, setRows] = useState<string[][]>([
     ["", "", "", "", ""],
@@ -72,7 +74,7 @@ export default function GameTable() {
     setColors(newColors);
 
     if (guessedWord === word) {
-      alert("Winner");
+      setHasWon(true); // Trigger the "You Win!" screen
       return;
     }
 
@@ -81,6 +83,10 @@ export default function GameTable() {
       setActiveRow((prev) => prev + 1);
     }
   }
+
+  const resetGame = () => {
+    setHasWon(false); // Reset the game and hide the modal
+  };
 
   const borderStyle =
     "border-2 w-16 h-16 flex items-center justify-center text-5xl";
@@ -174,11 +180,12 @@ export default function GameTable() {
       ))}
 
       <button
-        onClick={checkWord} // Use onClick for button
+        onClick={checkWord}
         className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded mt-4"
       >
         Giska
       </button>
+      <WinScreen isOpen={hasWon} onReset={resetGame} />
     </div>
   );
 }
