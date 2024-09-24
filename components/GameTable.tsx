@@ -75,7 +75,6 @@ export default function GameTable() {
 
     if (guessedWord === word) {
       setHasWon(true); // Trigger the "You Win!" screen
-      return;
     }
 
     // Move to the next row after guessing
@@ -85,6 +84,16 @@ export default function GameTable() {
   }
 
   const resetGame = () => {
+    setRows([
+      ["", "", "", "", ""],
+      ["", "", "", "", ""],
+      ["", "", "", "", ""],
+      ["", "", "", "", ""],
+      ["", "", "", "", ""],
+      ["", "", "", "", ""],
+    ]);
+    setActiveRow(0);
+    setColors(Array(6).fill(Array(5).fill("transparent")));
     setHasWon(false); // Reset the game and hide the modal
   };
 

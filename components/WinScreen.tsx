@@ -16,7 +16,7 @@ export default function WinScreen({ isOpen, onReset }: WinScreenProps) {
           className="bg-green-500 text-white px-6 py-2 rounded-full text-lg font-semibold"
           onClick={onReset}
         >
-          Play Again
+          Spila aftur
         </button>
       </div>
     </div>
