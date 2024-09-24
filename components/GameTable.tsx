@@ -212,7 +212,7 @@ export default function GameTable() {
   return (
     <div className="flex flex-col items-center gap-3">
       {rows.map((row, rowIndex) => (
-        <div className="flex justify-center items-center gap-3" key={rowIndex}>
+        <div className="flex gap-3" key={rowIndex}>
           {row.map((letter, index) => (
             <div
               className={borderStyle}

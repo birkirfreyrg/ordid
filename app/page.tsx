@@ -3,9 +3,9 @@ import GameTable from "@/components/GameTable";
 export default function Home() {
   return (
     // Wrapper
-    <div className="flex flex-col">
-      <h1 className="flex justify-center w-full my-2 mb-10 text-5xl ">ORÐIÐ</h1>
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col h-screen">
+      <h1 className="flex justify-center my-4 text-5xl ">ORÐIÐ</h1>
+      <div className="flex mt-20 justify-center items-center">
         <GameTable />
       </div>
     </div>
