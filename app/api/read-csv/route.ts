@@ -21,16 +21,13 @@ export async function GET() {
       const firstColumnWords = data.map(row => row[0]);
 
       // Filter for 5-letter words in the first column
-      fiveLetterWords = firstColumnWords.filter(word => word && word.length === 5);
+      fiveLetterWords = firstColumnWords.filter(word => word && word.length === 5 && !/[qwzc]/i.test(word));
     },
     header: false,
   });
 
   if (fiveLetterWords.length > 0) {
-    // Select a random 5-letter word from the first column
-    const randomIndex = Math.floor(Math.random() * fiveLetterWords.length);
-    const randomFiveLetterWord = fiveLetterWords[randomIndex];
-    return NextResponse.json({ randomFiveLetterWord });
+    return NextResponse.json({ fiveLetterWords });
   } else {
     return NextResponse.json({ error: 'No 5-letter words found in the first column' }, { status: 400 });
   }

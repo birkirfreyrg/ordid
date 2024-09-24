@@ -284,7 +284,7 @@ export default function GameTable() {
         <Keyboard onKeyPress={handleOnScreenKeyPress} />
 
         <WinScreen isOpen={hasWon} onReset={resetGame} />
-        <LooseScreen isOpen={hasLost} onReset={resetGame} />
+        <LooseScreen isOpen={hasLost} onReset={resetGame} word={word} />
       </div>
       <div className="absolute top-0 left-0 m-4">
         <button

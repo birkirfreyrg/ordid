@@ -1,9 +1,14 @@
 interface LooseScreenProps {
   isOpen: boolean;
   onReset: () => void;
+  word: string;
 }
 
-export default function LooseScreen({ isOpen, onReset }: LooseScreenProps) {
+export default function LooseScreen({
+  isOpen,
+  word,
+  onReset,
+}: LooseScreenProps) {
   if (!isOpen) return null;
 
   return (
@@ -12,6 +17,7 @@ export default function LooseScreen({ isOpen, onReset }: LooseScreenProps) {
         <h2 className="text-5xl font-bold mb-4 text-red-500">Úpsí!</h2>
         <p className="text-xl">Því miður!</p>
         <p className="mb-6">Þú giskaðir ekki á rétt orð!</p>
+        <p className="mb-6">Rétta orðið var {word}</p>
         <button
           className="bg-green-500 text-white px-6 py-2 rounded-full text-lg font-semibold"
           onClick={onReset}
