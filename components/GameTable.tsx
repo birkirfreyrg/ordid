@@ -112,6 +112,8 @@ export default function GameTable() {
     rowIndex: number,
     index: number
   ) => {
+    if (e.target.value === " ") return;
+
     const newRows = [...rows];
     const value = e.target.value.toUpperCase();
 
