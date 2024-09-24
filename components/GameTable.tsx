@@ -30,28 +30,23 @@ export default function GameTable() {
       .map(() => Array(5).fill(null))
   );
 
-  // Fetch the word from the API on initial mount
   useEffect(() => {
     const fetchWord = async () => {
       try {
-        const response = await fetch("/api/read-csv"); // Fetch word from API
+        const response = await fetch("/api/read-csv");
         const data = await response.json();
-        setWord(data.randomFiveLetterWord.toLowerCase()); // Set the fetched word
-        sessionStorage.setItem("gameWord", data.randomFiveLetterWord); // Store the word in sessionStorage
+        const newWord =
+          data.fiveLetterWords[
+            Math.floor(Math.random() * data.fiveLetterWords.length)
+          ].toLowerCase(); // Set the fetched word
+        setWord(newWord); // Store the new word in state
       } catch (error) {
         console.error("Error fetching word:", error);
       }
     };
 
-    // Check if the word is already stored in sessionStorage
-    const storedWord = sessionStorage.getItem("gameWord");
-
-    if (storedWord) {
-      setWord(storedWord); // If word exists in sessionStorage, use it
-    } else {
-      fetchWord(); // Otherwise, fetch a new word
-    }
-  }, []); // Empty dependency array ensures this runs only once
+    fetchWord(); // Always fetch a new word
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     inputRefs.current[activeRow]?.[0]?.focus(); // Focus the first input of the new active row
@@ -111,6 +106,7 @@ export default function GameTable() {
   }
 
   const resetGame = () => {
+    // Reset the game state
     setRows([
       ["", "", "", "", ""],
       ["", "", "", "", ""],
@@ -124,18 +120,24 @@ export default function GameTable() {
     setHasWon(false);
     setHasLost(false);
 
-    // Fetch a new word for the new game and store it in sessionStorage
+    // Fetch a new word for the new game and store it in state (no sessionStorage)
     const fetchWord = async () => {
       try {
         const response = await fetch("/api/read-csv");
         const data = await response.json();
-        setWord(data.randomFiveLetterWord.toLowerCase());
-        sessionStorage.setItem("gameWord", data.randomFiveLetterWord);
+        console.log(data.fiveLetterWords);
+        const newWord =
+          data.fiveLetterWords[
+            Math.floor(Math.random() * data.fiveLetterWords.length)
+          ].toLowerCase(); // Ensure you get a random word each time
+        setWord(newWord); // Set the new word in state
+        console.log("New Word: ", newWord);
       } catch (error) {
         console.error("Error fetching word:", error);
       }
     };
 
+    // Call fetchWord to get a new random word
     fetchWord();
   };
 
@@ -246,6 +248,7 @@ export default function GameTable() {
   return (
     <>
       <div className="flex flex-col items-center gap-3">
+        {word}
         {rows.map((row, rowIndex) => (
           <div className="flex gap-3" key={rowIndex}>
             {row.map((letter, index) => (

@@ -20,14 +20,23 @@ export async function GET() {
       // Extract words from the first column only
       const firstColumnWords = data.map(row => row[0]);
 
-      // Filter for 5-letter words in the first column
-      fiveLetterWords = firstColumnWords.filter(word => word && word.length === 5 && !/[qwzc]/i.test(word));
+      // Filter for 5-letter words in the first column excluding 'q', 'w', 'z', 'c'
+      fiveLetterWords = firstColumnWords.filter(
+        (word) => word && word.length === 5 && !/[qwzc]/i.test(word)
+      );
     },
     header: false,
   });
 
   if (fiveLetterWords.length > 0) {
-    return NextResponse.json({ fiveLetterWords });
+    // Add no-cache headers to ensure fresh fetch every time
+    const headers = new Headers({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store'
+    });
+    return NextResponse.json({ fiveLetterWords }, { headers });
   } else {
     return NextResponse.json({ error: 'No 5-letter words found in the first column' }, { status: 400 });
   }
