@@ -1,4 +1,5 @@
 import Backspace from "./Backspace";
+import EnterIcon from "./EnterIcon";
 
 type OnScreenKeyboardProps = {
   onKeyPress: (key: string) => void;
@@ -12,28 +13,28 @@ const Keyboard = ({ onKeyPress }: OnScreenKeyboardProps) => {
   ];
 
   return (
-    <div className="flex flex-col gap-2 mt-4">
+    <div className="flex flex-col gap-2 mt-12">
       {keys.map((row, rowIndex) => (
         <div key={rowIndex} className="flex justify-between gap-2">
           {row.map((key) => (
             <button
               key={key}
               onClick={() => onKeyPress(key)}
-              className={`bg-gray-500 hover:bg-gray-400 w-12 h-12 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded ${
+              className={`bg-gray-500 hover:bg-gray-400 w-12 h-12 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded  ${
                 key === "Backspace" ? "px-3" : ""
-              }`}
+              } ${key === "Enter" ? "px-3" : ""}`}
             >
               {key === "Backspace" ? <Backspace /> : key}
             </button>
           ))}
         </div>
       ))}
-      <div className="flex justify-center gap-2">
+      <div className="flex flex-col gap-2">
         <button
           onClick={() => onKeyPress("Enter")}
           className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-8 border-b-4 border-gray-700 hover:border-gray-500 rounded"
         >
-          Enter
+          GISKA
         </button>
       </div>
     </div>
