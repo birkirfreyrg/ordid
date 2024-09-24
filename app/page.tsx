@@ -1,4 +1,3 @@
-import CSVReader from "@/components/CsvReader";
 import GameTable from "@/components/GameTable";
 
 export default function Home() {
@@ -7,9 +6,6 @@ export default function Home() {
       <h1 className="flex justify-center my-4 text-5xl font-serif ">ORÐIÐ</h1>
       <div className="flex mt-20 justify-center items-center">
         <GameTable />
-      </div>
-      <div>
-        <CSVReader />
       </div>
     </div>
   );

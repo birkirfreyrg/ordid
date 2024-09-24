@@ -1,5 +1,4 @@
 import Backspace from "./Backspace";
-import EnterIcon from "./EnterIcon";
 
 type OnScreenKeyboardProps = {
   onKeyPress: (key: string) => void;
