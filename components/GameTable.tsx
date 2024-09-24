@@ -248,7 +248,6 @@ export default function GameTable() {
   return (
     <>
       <div className="flex flex-col items-center gap-3">
-        {word}
         {rows.map((row, rowIndex) => (
           <div className="flex gap-3" key={rowIndex}>
             {row.map((letter, index) => (
