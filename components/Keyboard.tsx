@@ -12,7 +12,7 @@ const Keyboard = ({ onKeyPress }: OnScreenKeyboardProps) => {
   ];
 
   return (
-    <div className="absolute flex flex-col bottom-0 gap-2 mb-2">
+    <div className="flex flex-col bottom-0 gap-2 my-2">
       {keys.map((row, rowIndex) => (
         <div key={rowIndex} className="flex justify-between gap-2">
           {row.map((key) => (
