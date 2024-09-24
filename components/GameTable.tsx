@@ -23,7 +23,7 @@ export default function GameTable() {
   );
 
   const [activeRow, setActiveRow] = useState<number>(0);
-  const word = "stárf";
+  const word = "starf";
 
   // Create refs for each input field with correct typing and initialization
   const inputRefs = useRef<(HTMLInputElement | null)[][]>(
@@ -78,6 +78,8 @@ export default function GameTable() {
 
     if (guessedWord === word) {
       setHasWon(true); // Trigger the "You Win!" screen
+      setActiveRow((prev) => prev + 1);
+      return;
     }
 
     // Move to the next row after guessing
