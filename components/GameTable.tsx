@@ -8,7 +8,6 @@ import Keyboard from "./Keyboard";
 export default function GameTable() {
   const [hasWon, setHasWon] = useState(false);
   const [hasLost, setHasLost] = useState(false);
-  // Initial state now tracks multiple rows
   const [rows, setRows] = useState<string[][]>([
     ["", "", "", "", ""],
     ["", "", "", "", ""],
@@ -23,22 +22,45 @@ export default function GameTable() {
   );
 
   const [activeRow, setActiveRow] = useState<number>(0);
-  const word = "starf";
+  const [word, setWord] = useState<string | null>(null); // Store the fetched word
 
-  // Create refs for each input field with correct typing and initialization
   const inputRefs = useRef<(HTMLInputElement | null)[][]>(
     Array(rows.length)
       .fill(null)
       .map(() => Array(5).fill(null))
   );
 
-  // Auto-focus on the first input of the active row when activeRow changes
+  // Fetch the word from the API on initial mount
+  useEffect(() => {
+    const fetchWord = async () => {
+      try {
+        const response = await fetch("/api/read-csv"); // Fetch word from API
+        const data = await response.json();
+        setWord(data.randomFiveLetterWord.toLowerCase()); // Set the fetched word
+        sessionStorage.setItem("gameWord", data.randomFiveLetterWord); // Store the word in sessionStorage
+      } catch (error) {
+        console.error("Error fetching word:", error);
+      }
+    };
+
+    // Check if the word is already stored in sessionStorage
+    const storedWord = sessionStorage.getItem("gameWord");
+
+    if (storedWord) {
+      setWord(storedWord); // If word exists in sessionStorage, use it
+    } else {
+      fetchWord(); // Otherwise, fetch a new word
+    }
+  }, []); // Empty dependency array ensures this runs only once
+
   useEffect(() => {
     inputRefs.current[activeRow]?.[0]?.focus(); // Focus the first input of the new active row
   }, [activeRow]);
 
   // Function to check if the guessed word matches the correct word
   function checkWord() {
+    if (!word) return; // If the word hasn't been fetched yet, exit early
+
     const guessedWord = rows[activeRow].join("").toLowerCase(); // Join letters and convert to lowercase
 
     // Not able to guess if row is not filled
@@ -46,11 +68,10 @@ export default function GameTable() {
       return;
     }
 
-    // Deep clone the colors array
     const newColors = colors.map((row) => [...row]);
 
     // Create a copy of the word array to track which letters have been "used up"
-    const wordLetters = word.split(""); // ['x', 'x', 'x', 'x', 'x']
+    const wordLetters = word.split(""); // Split the word into individual letters
 
     // First pass: Mark correct letters (green) in the correct positions
     for (let i = 0; i < 5; i++) {
@@ -67,8 +88,7 @@ export default function GameTable() {
         wordLetters.includes(guessedWord[i])
       ) {
         newColors[activeRow][i] = "goldenrod"; // Correct letter, wrong position
-        // Remove the letter from wordLetters to avoid marking it again
-        wordLetters[wordLetters.indexOf(guessedWord[i])] = "";
+        wordLetters[wordLetters.indexOf(guessedWord[i])] = ""; // Mark the letter as used
       } else if (newColors[activeRow][i] !== "green") {
         newColors[activeRow][i] = "gray"; // Incorrect letter
       }
@@ -103,12 +123,30 @@ export default function GameTable() {
     setColors(Array(6).fill(Array(5).fill("transparent")));
     setHasWon(false);
     setHasLost(false);
+
+    // Fetch a new word for the new game and store it in sessionStorage
+    const fetchWord = async () => {
+      try {
+        const response = await fetch("/api/read-csv");
+        const data = await response.json();
+        setWord(data.randomFiveLetterWord.toLowerCase());
+        sessionStorage.setItem("gameWord", data.randomFiveLetterWord);
+      } catch (error) {
+        console.error("Error fetching word:", error);
+      }
+    };
+
+    fetchWord();
+  };
+
+  // Handler for the "New Word" button
+  const handleNewWordClick = () => {
+    resetGame(); // Reset the game and fetch a new word
   };
 
   const borderStyle =
     "border-2 w-16 h-16 flex items-center justify-center text-5xl";
 
-  // Handler to update the input value for each row and index
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     rowIndex: number,
@@ -126,29 +164,25 @@ export default function GameTable() {
 
       // Move focus to the next input field in the current row
       if (value && index < rows[rowIndex].length - 1) {
-        inputRefs.current[rowIndex]?.[index + 1]?.focus(); // Optional chaining to avoid null/undefined access
+        inputRefs.current[rowIndex]?.[index + 1]?.focus();
       }
     }
   };
 
-  // Handler for keydown event (specifically checking for Enter and Backspace)
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     rowIndex: number,
     index: number
   ) => {
     if (e.key === "Enter" && rowIndex === activeRow) {
-      // Check if all boxes in the active row are filled before submitting
       if (rows[activeRow].every((letter) => letter !== "")) {
         checkWord();
       }
     }
 
-    // Handle Backspace: move to the previous box if necessary
     if (e.key === "Backspace" && rowIndex === activeRow) {
       const newRows = [...rows];
 
-      // If the current box is empty, move focus to the previous input
       if (index > 0 && rows[rowIndex][index] === "") {
         inputRefs.current[rowIndex]?.[index - 1]?.focus();
         newRows[rowIndex][index - 1] = ""; // Clear the previous box
@@ -163,7 +197,6 @@ export default function GameTable() {
   const handleOnScreenKeyPress = (key: string) => {
     const activeRowLetters = rows[activeRow];
 
-    // Handle letter input
     if (key !== "Backspace" && key !== "Enter") {
       for (let i = 0; i < activeRowLetters.length; i++) {
         if (activeRowLetters[i] === "") {
@@ -171,7 +204,6 @@ export default function GameTable() {
           newRows[activeRow][i] = key;
           setRows(newRows);
 
-          // Move focus to the next input box
           if (i < activeRowLetters.length - 1) {
             inputRefs.current[activeRow]?.[i + 1]?.focus();
           }
@@ -180,14 +212,13 @@ export default function GameTable() {
       }
     }
 
-    // Handle backspace logic
     if (key === "Backspace") {
       for (let i = activeRowLetters.length - 1; i >= 0; i--) {
         if (activeRowLetters[i] !== "") {
           const newRows = [...rows];
-          newRows[activeRow][i] = ""; // Clear the current box
+          newRows[activeRow][i] = "";
           setRows(newRows);
-          inputRefs.current[activeRow]?.[i]?.focus(); // Move focus to the current box
+          inputRefs.current[activeRow]?.[i]?.focus();
           break;
         } else if (
           i > 0 &&
@@ -195,61 +226,74 @@ export default function GameTable() {
           activeRowLetters[i - 1] !== ""
         ) {
           const newRows = [...rows];
-          newRows[activeRow][i - 1] = ""; // Clear the previous box
+          newRows[activeRow][i - 1] = "";
           setRows(newRows);
-          inputRefs.current[activeRow]?.[i - 1]?.focus(); // Move focus to the previous box
+          inputRefs.current[activeRow]?.[i - 1]?.focus();
           break;
         }
       }
     }
 
-    // Handle enter
     if (key === "Enter" && rows[activeRow].every((letter) => letter !== "")) {
       checkWord();
     }
   };
 
-  return (
-    <div className="flex flex-col items-center gap-3">
-      {rows.map((row, rowIndex) => (
-        <div className="flex gap-3" key={rowIndex}>
-          {row.map((letter, index) => (
-            <div
-              className={borderStyle}
-              key={index}
-              style={{
-                borderColor: "gray",
-                backgroundColor:
-                  rowIndex < activeRow
-                    ? colors[rowIndex][index]
-                    : "transparent", // Only apply color to previous rows
-              }}
-            >
-              <input
-                ref={(el) => {
-                  // Ensure inputRefs.current[rowIndex] is initialized as an array
-                  if (!inputRefs.current[rowIndex]) {
-                    inputRefs.current[rowIndex] = [];
-                  }
-                  inputRefs.current[rowIndex][index] = el; // Store the reference in the correct position
-                }}
-                type="text"
-                maxLength={1}
-                value={letter}
-                onChange={(e) => handleInputChange(e, rowIndex, index)}
-                onKeyDown={(e) => handleKeyDown(e, rowIndex, index)}
-                disabled={rowIndex !== activeRow} // Disable non-active rows
-                className="text-center w-full h-full bg-transparent border-none focus:outline-none"
-                autoFocus={rowIndex === 0 && index === 0} // Auto-focus the first input in the first row
-              />
-            </div>
-          ))}
-        </div>
-      ))}
+  if (!word) {
+    return <p>Loading...</p>; // Show a loading state until the word is fetched
+  }
 
-      <Keyboard onKeyPress={handleOnScreenKeyPress} />
-      <WinScreen isOpen={hasWon} onReset={resetGame} />
-      <LooseScreen isOpen={hasLost} onReset={resetGame} />
-    </div>
+  return (
+    <>
+      <div className="flex flex-col items-center gap-3">
+        {rows.map((row, rowIndex) => (
+          <div className="flex gap-3" key={rowIndex}>
+            {row.map((letter, index) => (
+              <div
+                className={borderStyle}
+                key={index}
+                style={{
+                  borderColor: "gray",
+                  backgroundColor:
+                    rowIndex < activeRow
+                      ? colors[rowIndex][index]
+                      : "transparent", // Only apply color to previous rows
+                }}
+              >
+                <input
+                  ref={(el) => {
+                    if (!inputRefs.current[rowIndex]) {
+                      inputRefs.current[rowIndex] = [];
+                    }
+                    inputRefs.current[rowIndex][index] = el;
+                  }}
+                  type="text"
+                  maxLength={1}
+                  value={letter}
+                  onChange={(e) => handleInputChange(e, rowIndex, index)}
+                  onKeyDown={(e) => handleKeyDown(e, rowIndex, index)}
+                  disabled={rowIndex !== activeRow}
+                  className="text-center w-full h-full bg-transparent border-none focus:outline-none"
+                  autoFocus={rowIndex === 0 && index === 0}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+
+        <Keyboard onKeyPress={handleOnScreenKeyPress} />
+
+        <WinScreen isOpen={hasWon} onReset={resetGame} />
+        <LooseScreen isOpen={hasLost} onReset={resetGame} />
+      </div>
+      <div className="absolute top-0 left-0 m-4">
+        <button
+          onClick={handleNewWordClick}
+          className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded"
+        >
+          Nýtt orð
+        </button>
+      </div>
+    </>
   );
 }
