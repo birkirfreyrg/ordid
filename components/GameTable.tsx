@@ -2,9 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import WinScreen from "./WinScreen";
+import LooseScreen from "./LooseScreen";
 
 export default function GameTable() {
   const [hasWon, setHasWon] = useState(false);
+  const [hasLost, setHasLost] = useState(false);
   // Initial state now tracks multiple rows
   const [rows, setRows] = useState<string[][]>([
     ["", "", "", "", ""],
@@ -80,6 +82,8 @@ export default function GameTable() {
     // Move to the next row after guessing
     if (activeRow < rows.length - 1) {
       setActiveRow((prev) => prev + 1);
+    } else {
+      setHasLost(true);
     }
   }
 
@@ -94,7 +98,8 @@ export default function GameTable() {
     ]);
     setActiveRow(0);
     setColors(Array(6).fill(Array(5).fill("transparent")));
-    setHasWon(false); // Reset the game and hide the modal
+    setHasWon(false);
+    setHasLost(false);
   };
 
   const borderStyle =
@@ -195,6 +200,7 @@ export default function GameTable() {
         Giska
       </button>
       <WinScreen isOpen={hasWon} onReset={resetGame} />
+      <LooseScreen isOpen={hasLost} onReset={resetGame} />
     </div>
   );
 }
