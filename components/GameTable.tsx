@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import WinScreen from "./WinScreen";
 import LooseScreen from "./LooseScreen";
+import Keyboard from "./Keyboard";
 
 export default function GameTable() {
   const [hasWon, setHasWon] = useState(false);
@@ -22,7 +23,7 @@ export default function GameTable() {
   );
 
   const [activeRow, setActiveRow] = useState<number>(0);
-  const word = "stars";
+  const word = "stárf";
 
   // Create refs for each input field with correct typing and initialization
   const inputRefs = useRef<(HTMLInputElement | null)[][]>(
@@ -155,6 +156,55 @@ export default function GameTable() {
     }
   };
 
+  const handleOnScreenKeyPress = (key: string) => {
+    const activeRowLetters = rows[activeRow];
+
+    // Handle letter input
+    if (key !== "Backspace" && key !== "Enter") {
+      for (let i = 0; i < activeRowLetters.length; i++) {
+        if (activeRowLetters[i] === "") {
+          const newRows = [...rows];
+          newRows[activeRow][i] = key;
+          setRows(newRows);
+
+          // Move focus to the next input box
+          if (i < activeRowLetters.length - 1) {
+            inputRefs.current[activeRow]?.[i + 1]?.focus();
+          }
+          break;
+        }
+      }
+    }
+
+    // Handle backspace logic
+    if (key === "Backspace") {
+      for (let i = activeRowLetters.length - 1; i >= 0; i--) {
+        if (activeRowLetters[i] !== "") {
+          const newRows = [...rows];
+          newRows[activeRow][i] = ""; // Clear the current box
+          setRows(newRows);
+          inputRefs.current[activeRow]?.[i]?.focus(); // Move focus to the current box
+          break;
+        } else if (
+          i > 0 &&
+          activeRowLetters[i] === "" &&
+          activeRowLetters[i - 1] !== ""
+        ) {
+          const newRows = [...rows];
+          newRows[activeRow][i - 1] = ""; // Clear the previous box
+          setRows(newRows);
+          inputRefs.current[activeRow]?.[i - 1]?.focus(); // Move focus to the previous box
+          break;
+        }
+      }
+    }
+
+    // Handle enter
+    if (key === "Enter" && rows[activeRow].every((letter) => letter !== "")) {
+      checkWord();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-3">
       {rows.map((row, rowIndex) => (
@@ -193,12 +243,7 @@ export default function GameTable() {
         </div>
       ))}
 
-      <button
-        onClick={checkWord}
-        className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded mt-4"
-      >
-        Giska
-      </button>
+      <Keyboard onKeyPress={handleOnScreenKeyPress} />
       <WinScreen isOpen={hasWon} onReset={resetGame} />
       <LooseScreen isOpen={hasLost} onReset={resetGame} />
     </div>
