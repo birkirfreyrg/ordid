@@ -8,6 +8,8 @@ import Keyboard from "./Keyboard";
 export default function GameTable() {
   const [hasWon, setHasWon] = useState(false);
   const [hasLost, setHasLost] = useState(false);
+  const [yellowLetters, setYellowLetters] = useState<string[]>([]);
+  const [greenLetters, setGreenLetters] = useState<string[]>([]);
   const [rows, setRows] = useState<string[][]>([
     ["", "", "", "", ""],
     ["", "", "", "", ""],
@@ -71,6 +73,7 @@ export default function GameTable() {
     // First pass: Mark correct letters (green) in the correct positions
     for (let i = 0; i < 5; i++) {
       if (guessedWord[i] === word[i]) {
+        greenLetters.push(word[i]);
         newColors[activeRow][i] = "green"; // Correct letter and position
         wordLetters[i] = ""; // Mark the letter as used
       }
@@ -82,6 +85,7 @@ export default function GameTable() {
         newColors[activeRow][i] !== "green" &&
         wordLetters.includes(guessedWord[i])
       ) {
+        yellowLetters.push(guessedWord[i]);
         newColors[activeRow][i] = "goldenrod"; // Correct letter, wrong position
         wordLetters[wordLetters.indexOf(guessedWord[i])] = ""; // Mark the letter as used
       } else if (newColors[activeRow][i] !== "green") {
@@ -117,6 +121,8 @@ export default function GameTable() {
     ]);
     setActiveRow(0);
     setColors(Array(6).fill(Array(5).fill("transparent")));
+    setGreenLetters([]);
+    setYellowLetters([]);
     setHasWon(false);
     setHasLost(false);
 
@@ -125,13 +131,11 @@ export default function GameTable() {
       try {
         const response = await fetch("/api/read-csv");
         const data = await response.json();
-        console.log(data.fiveLetterWords);
         const newWord =
           data.fiveLetterWords[
             Math.floor(Math.random() * data.fiveLetterWords.length)
           ].toLowerCase(); // Ensure you get a random word each time
         setWord(newWord); // Set the new word in state
-        console.log("New Word: ", newWord);
       } catch (error) {
         console.error("Error fetching word:", error);
       }
@@ -283,7 +287,11 @@ export default function GameTable() {
           </div>
         ))}
 
-        <Keyboard onKeyPress={handleOnScreenKeyPress} />
+        <Keyboard
+          onKeyPress={handleOnScreenKeyPress}
+          greenLetters={greenLetters}
+          yellowLetters={yellowLetters}
+        />
 
         <WinScreen isOpen={hasWon} onReset={resetGame} />
         <LooseScreen isOpen={hasLost} onReset={resetGame} word={word} />

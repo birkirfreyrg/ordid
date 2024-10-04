@@ -2,9 +2,15 @@ import Backspace from "./Backspace";
 
 type OnScreenKeyboardProps = {
   onKeyPress: (key: string) => void;
+  greenLetters: string[];
+  yellowLetters: string[];
 };
 
-const Keyboard = ({ onKeyPress }: OnScreenKeyboardProps) => {
+const Keyboard = ({
+  onKeyPress,
+  greenLetters,
+  yellowLetters,
+}: OnScreenKeyboardProps) => {
   const keys = [
     ["A", "Á", "B", "D", "E", "É", "F", "G", "H", "I", "Backspace"],
     ["Í", "J", "K", "L", "M", "N", "O", "Ó", "P", "R", "S"],
@@ -19,7 +25,16 @@ const Keyboard = ({ onKeyPress }: OnScreenKeyboardProps) => {
             <button
               key={key}
               onClick={() => onKeyPress(key)}
-              className={`bg-gray-500 hover:bg-gray-400 w-12 h-12 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded  ${
+              className={`  w-12 h-12 ${
+                greenLetters.includes(key.toLowerCase())
+                  ? "bg-green-600 hover:bg-green-400 border-green-700 hover:border-green-500"
+                  : "bg-gray-500 hover:bg-gray-400 border-gray-700 hover:border-gray-500"
+              } ${
+                yellowLetters.includes(key.toLowerCase()) &&
+                !greenLetters.includes(key.toLowerCase())
+                  ? "bg-yellow-500 hover:bg-yellow-400 border-yellow-600 hover:border-yellow-500"
+                  : "bg-gray-500 hover:bg-gray-400 border-gray-700 hover:border-gray-500"
+              } text-white font-bold py-2 px-4 border-b-4 rounded  ${
                 key === "Backspace" ? "px-3" : ""
               } ${key === "Enter" ? "px-3" : ""}`}
             >
@@ -35,6 +50,7 @@ const Keyboard = ({ onKeyPress }: OnScreenKeyboardProps) => {
         >
           GISKA
         </button>
+        <div>{greenLetters}</div>
       </div>
     </div>
   );
