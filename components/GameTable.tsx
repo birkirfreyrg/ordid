@@ -4,12 +4,15 @@ import { useState, useRef, useEffect } from "react";
 import WinScreen from "./WinScreen";
 import LooseScreen from "./LooseScreen";
 import Keyboard from "./Keyboard";
+import WordNotFound from "./WordNotFound";
 
 export default function GameTable() {
   const [hasWon, setHasWon] = useState(false);
   const [hasLost, setHasLost] = useState(false);
+  const [wordsData, setWordsData] = useState<string[]>([]);
   const [yellowLetters, setYellowLetters] = useState<string[]>([]);
   const [greenLetters, setGreenLetters] = useState<string[]>([]);
+  const [showError, setShowError] = useState(false);
   const [rows, setRows] = useState<string[][]>([
     ["", "", "", "", ""],
     ["", "", "", "", ""],
@@ -37,6 +40,7 @@ export default function GameTable() {
       try {
         const response = await fetch("/api/read-csv");
         const data = await response.json();
+        setWordsData(data.fiveLetterWords);
         const newWord =
           data.fiveLetterWords[
             Math.floor(Math.random() * data.fiveLetterWords.length)
@@ -63,10 +67,18 @@ export default function GameTable() {
   function checkWord() {
     if (!word) return; // If the word hasn't been fetched yet, exit early
 
-    const guessedWord = rows[activeRow].join("").toLowerCase(); // Join letters and convert to lowercase
-
+    const guessedWord: string = rows[activeRow].join("").toLowerCase(); // Join letters and convert to lowercase
+    console.log(wordsData);
     // Not able to guess if row is not filled
     if (guessedWord.length < 5) {
+      return;
+    }
+
+    if (!wordsData.includes(guessedWord)) {
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+      }, 2000);
       return;
     }
 
@@ -300,6 +312,10 @@ export default function GameTable() {
 
         <WinScreen isOpen={hasWon} onReset={resetGame} close={close} />
         <LooseScreen isOpen={hasLost} onReset={resetGame} word={word} />
+        <WordNotFound
+          notAWord={showError}
+          guessedWord={rows[activeRow].join("")}
+        />
       </div>
       <div className="absolute top-0 left-0 m-4">
         <button
