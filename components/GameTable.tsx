@@ -42,6 +42,7 @@ export default function GameTable() {
             Math.floor(Math.random() * data.fiveLetterWords.length)
           ].toLowerCase(); // Set the fetched word
         setWord(newWord); // Store the new word in state
+        console.log(newWord);
       } catch (error) {
         console.error("Error fetching word:", error);
       }
@@ -53,6 +54,10 @@ export default function GameTable() {
   useEffect(() => {
     inputRefs.current[activeRow]?.[0]?.focus(); // Focus the first input of the new active row
   }, [activeRow]);
+
+  const close = () => {
+    setHasWon(false);
+  };
 
   // Function to check if the guessed word matches the correct word
   function checkWord() {
@@ -293,7 +298,7 @@ export default function GameTable() {
           yellowLetters={yellowLetters}
         />
 
-        <WinScreen isOpen={hasWon} onReset={resetGame} />
+        <WinScreen isOpen={hasWon} onReset={resetGame} close={close} />
         <LooseScreen isOpen={hasLost} onReset={resetGame} word={word} />
       </div>
       <div className="absolute top-0 left-0 m-4">

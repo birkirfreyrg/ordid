@@ -50,7 +50,6 @@ const Keyboard = ({
         >
           GISKA
         </button>
-        <div>{greenLetters}</div>
       </div>
     </div>
   );
