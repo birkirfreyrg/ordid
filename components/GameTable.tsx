@@ -11,6 +11,7 @@ export default function GameTable() {
   const [hasLost, setHasLost] = useState(false);
   const [wordsData, setWordsData] = useState<string[]>([]);
   const [yellowLetters, setYellowLetters] = useState<string[]>([]);
+  const [grayLetters, setGrayLetters] = useState<string[]>([]);
   const [greenLetters, setGreenLetters] = useState<string[]>([]);
   const [showError, setShowError] = useState(false);
   const [rows, setRows] = useState<string[][]>([
@@ -106,6 +107,7 @@ export default function GameTable() {
         newColors[activeRow][i] = "goldenrod"; // Correct letter, wrong position
         wordLetters[wordLetters.indexOf(guessedWord[i])] = ""; // Mark the letter as used
       } else if (newColors[activeRow][i] !== "green") {
+        grayLetters.push(guessedWord[i]);
         newColors[activeRow][i] = "gray"; // Incorrect letter
       }
     }
@@ -140,6 +142,7 @@ export default function GameTable() {
     setColors(Array(6).fill(Array(5).fill("transparent")));
     setGreenLetters([]);
     setYellowLetters([]);
+    setGrayLetters([]);
     setHasWon(false);
     setHasLost(false);
 
@@ -308,6 +311,7 @@ export default function GameTable() {
           onKeyPress={handleOnScreenKeyPress}
           greenLetters={greenLetters}
           yellowLetters={yellowLetters}
+          grayLetters={grayLetters}
         />
 
         <WinScreen isOpen={hasWon} onReset={resetGame} close={close} />
