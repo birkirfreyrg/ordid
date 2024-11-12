@@ -39,7 +39,7 @@ export default function GameTable() {
   useEffect(() => {
     const fetchWord = async () => {
       try {
-        const response = await fetch("/api/read-csv");
+        const response = await fetch("/api/read");
         const data = await response.json();
         setWordsData(data.fiveLetterWords);
         const newWord =
@@ -75,6 +75,9 @@ export default function GameTable() {
       return;
     }
 
+    /* TODO Add this with a larger database 
+    (not the actual database so people can guess actual words even if they are not in the database) */
+    /*
     if (!wordsData.includes(guessedWord)) {
       setShowError(true);
       setTimeout(() => {
@@ -82,7 +85,7 @@ export default function GameTable() {
       }, 2000);
       return;
     }
-
+    */
     const newColors = colors.map((row) => [...row]);
 
     // Create a copy of the word array to track which letters have been "used up"
@@ -149,7 +152,7 @@ export default function GameTable() {
     // Fetch a new word for the new game and store it in state (no sessionStorage)
     const fetchWord = async () => {
       try {
-        const response = await fetch("/api/read-csv");
+        const response = await fetch("/api/read");
         const data = await response.json();
         const newWord =
           data.fiveLetterWords[
@@ -316,10 +319,13 @@ export default function GameTable() {
 
         <WinScreen isOpen={hasWon} onReset={resetGame} close={close} />
         <LooseScreen isOpen={hasLost} onReset={resetGame} word={word} />
+        {/* TODO Word not in database error with a larger database */}
+        {/*
         <WordNotFound
           notAWord={showError}
           guessedWord={rows[activeRow].join("")}
         />
+        */}
       </div>
       <div className="absolute top-0 left-0 m-4">
         <button

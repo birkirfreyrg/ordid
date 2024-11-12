@@ -68,7 +68,6 @@ const Keyboard = ({
           GISKA
         </button>
       </div>
-      {"Gray Letters eru: " + grayLetters}
     </div>
   );
 };
