@@ -4,16 +4,16 @@ import { useState, useRef, useEffect } from "react";
 import WinScreen from "./WinScreen";
 import LooseScreen from "./LooseScreen";
 import Keyboard from "./Keyboard";
-import WordNotFound from "./WordNotFound";
+//import WordNotFound from "./WordNotFound";
 
 export default function GameTable() {
   const [hasWon, setHasWon] = useState(false);
   const [hasLost, setHasLost] = useState(false);
-  const [wordsData, setWordsData] = useState<string[]>([]);
+  //const [wordsData, setWordsData] = useState<string[]>([]);
   const [yellowLetters, setYellowLetters] = useState<string[]>([]);
   const [grayLetters, setGrayLetters] = useState<string[]>([]);
   const [greenLetters, setGreenLetters] = useState<string[]>([]);
-  const [showError, setShowError] = useState(false);
+  //const [showError, setShowError] = useState(false);
   const [rows, setRows] = useState<string[][]>([
     ["", "", "", "", ""],
     ["", "", "", "", ""],
@@ -41,7 +41,8 @@ export default function GameTable() {
       try {
         const response = await fetch("/api/read");
         const data = await response.json();
-        setWordsData(data.fiveLetterWords);
+        // set up with bigger database for permitted guesses.
+        //setWordsData(data.fiveLetterWords);
         const newWord =
           data.fiveLetterWords[
             Math.floor(Math.random() * data.fiveLetterWords.length)
