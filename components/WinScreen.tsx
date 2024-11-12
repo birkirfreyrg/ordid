@@ -1,10 +1,16 @@
 interface WinScreenProps {
+  word: string;
   isOpen: boolean;
   onReset: () => void;
   close: () => void;
 }
 
-export default function WinScreen({ isOpen, onReset, close }: WinScreenProps) {
+export default function WinScreen({
+  word,
+  isOpen,
+  onReset,
+  close,
+}: WinScreenProps) {
   if (!isOpen) return null;
 
   return (
@@ -15,7 +21,8 @@ export default function WinScreen({ isOpen, onReset, close }: WinScreenProps) {
         </button>
         <h2 className="text-5xl font-bold mb-4 text-green-500">Woohoo!</h2>
         <p className="text-xl">Til hamingju snillingur!</p>
-        <p className="mb-6">Þú giskaðir á rétt orð!</p>
+        <p className="mb-6">{word} var rétt orð!</p>
+        <p className="mb-6"></p>
         <button
           className="bg-green-500 text-white px-6 py-2 rounded-full text-lg font-semibold"
           onClick={onReset}

@@ -317,7 +317,12 @@ export default function GameTable() {
           grayLetters={grayLetters}
         />
 
-        <WinScreen isOpen={hasWon} onReset={resetGame} close={close} />
+        <WinScreen
+          word={word}
+          isOpen={hasWon}
+          onReset={resetGame}
+          close={close}
+        />
         <LooseScreen isOpen={hasLost} onReset={resetGame} word={word} />
         {/* TODO Word not in database error with a larger database */}
         {/*
