@@ -47,7 +47,6 @@ export default function GameTable() {
             Math.floor(Math.random() * data.fiveLetterWords.length)
           ].toLowerCase(); // Set the fetched word
         setWord(newWord); // Store the new word in state
-        console.log(newWord);
       } catch (error) {
         console.error("Error fetching word:", error);
       }
@@ -69,7 +68,6 @@ export default function GameTable() {
     if (!word) return; // If the word hasn't been fetched yet, exit early
 
     const guessedWord: string = rows[activeRow].join("").toLowerCase(); // Join letters and convert to lowercase
-    console.log(wordsData);
     // Not able to guess if row is not filled
     if (guessedWord.length < 5) {
       return;
