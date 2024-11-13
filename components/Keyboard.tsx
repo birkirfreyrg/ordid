@@ -28,47 +28,55 @@ const Keyboard = ({
   const darkGrayButton = "bg-gray-700 border-gray-800";
 
   return (
-    <div className="flex flex-col bottom-0 gap-2 my-2">
-      {keys.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex justify-between gap-2">
-          {row.map((key) => (
-            <button
-              key={key}
-              onClick={() => onKeyPress(key)}
-              className={`  w-12 h-12 ${
-                greenLetters.includes(key.toLowerCase())
-                  ? greenButton
-                  : grayButton
-              } ${
-                yellowLetters.includes(key.toLowerCase()) &&
-                !greenLetters.includes(key.toLowerCase())
-                  ? yellowButton
-                  : grayButton
-              } ${
-                grayLetters.includes(key.toLowerCase()) &&
-                !greenLetters.includes(key.toLowerCase()) &&
-                !yellowLetters.includes(key.toLowerCase())
-                  ? darkGrayButton
-                  : grayButton
-              } text-white font-bold py-2 px-4 border-b-4 rounded  ${
-                key === "Backspace" ? "px-3" : ""
-              } ${key === "Enter" ? "px-3" : ""}`}
-            >
-              {key === "Backspace" ? <Backspace /> : key}
-            </button>
-          ))}
-        </div>
-      ))}
+    <>
+      <button
+        onClick={() => onKeyPress("Enter")}
+        className="w-full bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-8 border-b-4 border-gray-700 hover:border-gray-500 rounded show md:hidden"
+      >
+        GISKA
+      </button>
+      <div className="md:flex flex-col hidden gap-2 my-2 text-2xl ">
+        {keys.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-between gap-2">
+            {row.map((key) => (
+              <button
+                key={key}
+                onClick={() => onKeyPress(key)}
+                className={`  w-12 h-12 ${
+                  greenLetters.includes(key.toLowerCase())
+                    ? greenButton
+                    : grayButton
+                } ${
+                  yellowLetters.includes(key.toLowerCase()) &&
+                  !greenLetters.includes(key.toLowerCase())
+                    ? yellowButton
+                    : grayButton
+                } ${
+                  grayLetters.includes(key.toLowerCase()) &&
+                  !greenLetters.includes(key.toLowerCase()) &&
+                  !yellowLetters.includes(key.toLowerCase())
+                    ? darkGrayButton
+                    : grayButton
+                } text-white font-bold py-2 px-4 border-b-4 rounded  ${
+                  key === "Backspace" ? "px-3" : ""
+                } ${key === "Enter" ? "px-3" : ""}`}
+              >
+                {key === "Backspace" ? <Backspace /> : key}
+              </button>
+            ))}
+          </div>
+        ))}
 
-      <div className="flex flex-col gap-2">
-        <button
-          onClick={() => onKeyPress("Enter")}
-          className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-8 border-b-4 border-gray-700 hover:border-gray-500 rounded"
-        >
-          GISKA
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => onKeyPress("Enter")}
+            className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-8 border-b-4 border-gray-700 hover:border-gray-500 rounded show"
+          >
+            GISKA
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
