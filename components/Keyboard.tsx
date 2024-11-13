@@ -47,7 +47,7 @@ const Keyboard = ({
               } ${
                 grayLetters.includes(key.toLowerCase()) &&
                 !greenLetters.includes(key.toLowerCase()) &&
-                !yellowButton.includes(key.toLowerCase())
+                !yellowLetters.includes(key.toLowerCase())
                   ? darkGrayButton
                   : grayButton
               } text-white font-bold py-2 px-4 border-b-4 rounded  ${
